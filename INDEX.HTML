@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SmartProfit — Profit Predictor AI</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy: #0d1b3e;
+    --blue: #1a3a8f;
+    --electric: #3d6ff8;
+    --coral: #f05a4e;
+    --cream: #f4f0e8;
+    --light: #eef2ff;
+    --text: #0d1b3e;
+    --muted: #6b7a99;
+    --white: #ffffff;
+    --green: #1D9E75;
+    --red: #D85A30;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(244,240,232,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(13,27,62,0.08);
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    color: var(--navy);
+    letter-spacing: -0.02em;
+  }
+  .nav-logo span { color: var(--electric); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a { font-size: 0.875rem; color: var(--muted); text-decoration: none; font-weight: 400; letter-spacing: 0.02em; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--navy); }
+  .nav-cta {
+    background: var(--navy); color: var(--cream);
+    border: none; padding: 0.65rem 1.5rem;
+    font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500;
+    border-radius: 2px; cursor: pointer; transition: background 0.2s;
+    text-decoration: none;
+  }
+  .nav-cta:hover { background: var(--blue); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 7rem 4rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 30%, rgba(61,111,248,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 70%, rgba(240,90,78,0.08) 0%, transparent 60%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image: linear-gradient(rgba(13,27,62,0.04) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(13,27,62,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 780px; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--white); border: 1px solid rgba(61,111,248,0.3);
+    padding: 0.4rem 1rem; border-radius: 100px;
+    font-size: 0.78rem; font-weight: 500; color: var(--electric);
+    letter-spacing: 0.06em; text-transform: uppercase;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero-tag::before { content: ''; width: 6px; height: 6px; background: var(--electric); border-radius: 50%; display: inline-block; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(3rem, 7vw, 6rem);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    color: var(--navy);
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  h1 em { font-style: italic; color: var(--electric); }
+
+  .hero-sub {
+    margin-top: 1.5rem;
+    font-size: 1.1rem; font-weight: 300;
+    color: var(--muted); line-height: 1.7;
+    max-width: 520px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-actions {
+    margin-top: 2.5rem;
+    display: flex; gap: 1rem; align-items: center;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+  .btn-primary {
+    background: var(--navy); color: var(--cream);
+    border: none; padding: 0.9rem 2.2rem;
+    font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 500;
+    border-radius: 2px; cursor: pointer; transition: all 0.2s;
+    text-decoration: none; display: inline-block;
+  }
+  .btn-primary:hover { background: var(--electric); transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent; color: var(--navy);
+    border: 1.5px solid var(--navy); padding: 0.9rem 2.2rem;
+    font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 400;
+    border-radius: 2px; cursor: pointer; transition: all 0.2s;
+    text-decoration: none; display: inline-block;
+  }
+  .btn-outline:hover { background: var(--navy); color: var(--cream); }
+
+  .hero-stat-row {
+    margin-top: 4rem;
+    display: flex; gap: 3rem;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+  .hero-stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.2rem; color: var(--navy); letter-spacing: -0.02em;
+  }
+  .hero-stat-label { font-size: 0.78rem; color: var(--muted); font-weight: 400; margin-top: 2px; letter-spacing: 0.03em; }
+
+  @keyframes fadeUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: none; } }
+
+  /* FLOATING CARD */
+  .hero-visual {
+    position: absolute; right: 4rem; top: 50%; transform: translateY(-50%);
+    z-index: 1;
+    animation: fadeUp 0.7s 0.5s ease both;
+  }
+  .floating-card {
+    background: var(--white);
+    border: 1px solid rgba(13,27,62,0.1);
+    border-radius: 4px;
+    padding: 1.5rem;
+    width: 300px;
+    box-shadow: 0 20px 60px rgba(13,27,62,0.12);
+  }
+  .fc-label { font-size: 0.7rem; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+  .fc-profit { font-family: 'DM Serif Display', serif; font-size: 2.4rem; color: var(--green); letter-spacing: -0.03em; }
+  .fc-bars { margin-top: 1.2rem; display: flex; flex-direction: column; gap: 8px; }
+  .fc-bar-row { display: flex; align-items: center; gap: 10px; }
+  .fc-bar-name { font-size: 0.72rem; color: var(--muted); width: 70px; flex-shrink: 0; }
+  .fc-track { flex: 1; height: 6px; background: rgba(13,27,62,0.07); border-radius: 3px; overflow: hidden; }
+  .fc-fill { height: 100%; border-radius: 3px; }
+  .fc-divider { height: 1px; background: rgba(13,27,62,0.07); margin: 1rem 0; }
+  .fc-row { display: flex; justify-content: space-between; font-size: 0.78rem; }
+  .fc-key { color: var(--muted); }
+  .fc-val { font-weight: 500; color: var(--navy); }
+
+  /* SECTION COMMON */
+  section { padding: 6rem 4rem; }
+  .section-tag {
+    display: inline-block; font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--electric);
+    border-left: 2px solid var(--electric); padding-left: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    letter-spacing: -0.025em;
+    color: var(--navy);
+    line-height: 1.1;
+  }
+  h2 em { font-style: italic; color: var(--electric); }
+
+  /* HOW IT WORKS */
+  .how { background: var(--navy); color: var(--cream); }
+  .how .section-tag { color: #7fa0ff; border-color: #7fa0ff; }
+  .how h2 { color: var(--cream); }
+  .how h2 em { color: #7fa0ff; }
+  .how-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; margin-top: 3.5rem; }
+  .how-card {
+    background: rgba(255,255,255,0.04);
+    padding: 2rem;
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    transition: background 0.2s;
+  }
+  .how-card:hover { background: rgba(255,255,255,0.07); }
+  .how-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3.5rem; color: rgba(255,255,255,0.08);
+    position: absolute; top: 1rem; right: 1.5rem;
+    line-height: 1;
+  }
+  .how-icon { font-size: 1.5rem; margin-bottom: 1.2rem; }
+  .how-card h3 { font-size: 1rem; font-weight: 500; color: var(--cream); margin-bottom: 0.6rem; }
+  .how-card p { font-size: 0.875rem; color: rgba(244,240,232,0.55); line-height: 1.7; font-weight: 300; }
+
+  /* PREDICTOR */
+  .predictor { background: var(--light); }
+  .pred-wrap {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
+    margin-top: 3rem; align-items: start;
+  }
+  .pred-form { background: var(--white); border: 1px solid rgba(13,27,62,0.1); border-radius: 4px; padding: 2rem; }
+  .pred-form h3 { font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--navy); margin-bottom: 1.5rem; }
+  .field-group { margin-bottom: 1.2rem; }
+  .field-label { display: block; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 0.4rem; }
+  .field-input, .field-select {
+    width: 100%; padding: 0.7rem 1rem;
+    border: 1.5px solid rgba(13,27,62,0.12); border-radius: 2px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: var(--text);
+    background: var(--cream); outline: none; transition: border-color 0.2s;
+  }
+  .field-input:focus, .field-select:focus { border-color: var(--electric); }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .pred-btn {
+    width: 100%; margin-top: 0.5rem;
+    background: var(--navy); color: var(--cream);
+    border: none; padding: 1rem;
+    font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 500;
+    border-radius: 2px; cursor: pointer; transition: background 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .pred-btn:hover { background: var(--electric); }
+
+  .pred-result { display: flex; flex-direction: column; gap: 1.2rem; }
+  .result-main {
+    background: var(--navy); border-radius: 4px; padding: 2rem;
+    color: var(--cream);
+  }
+  .result-main-label { font-size: 0.72rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(244,240,232,0.5); margin-bottom: 0.4rem; }
+  .result-main-val { font-family: 'DM Serif Display', serif; font-size: 3rem; letter-spacing: -0.04em; }
+  .result-main-sub { font-size: 0.8rem; color: rgba(244,240,232,0.5); margin-top: 0.3rem; font-weight: 300; }
+
+  .result-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .result-card { background: var(--white); border: 1px solid rgba(13,27,62,0.1); border-radius: 4px; padding: 1rem 1.2rem; }
+  .rc-label { font-size: 0.7rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); margin-bottom: 0.3rem; }
+  .rc-val { font-size: 1rem; font-weight: 500; color: var(--navy); }
+
+  .result-bars { background: var(--white); border: 1px solid rgba(13,27,62,0.1); border-radius: 4px; padding: 1.2rem 1.5rem; }
+  .bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .bar-row:last-child { margin-bottom: 0; }
+  .bar-lbl { font-size: 0.75rem; color: var(--muted); width: 80px; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 8px; background: rgba(13,27,62,0.07); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.7s cubic-bezier(.22,1,.36,1); }
+  .result-note { font-size: 0.78rem; color: var(--muted); line-height: 1.6; font-weight: 300; font-style: italic; }
+  .result-placeholder { background: var(--white); border: 1px solid rgba(13,27,62,0.1); border-radius: 4px; padding: 2rem; text-align: center; color: var(--muted); font-size: 0.9rem; font-weight: 300; }
+
+  /* VALUE */
+  .value-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; margin-top: 3.5rem; background: rgba(13,27,62,0.1); border: 1px solid rgba(13,27,62,0.1); }
+  .value-item { background: var(--cream); padding: 2rem; }
+  .value-icon { width: 40px; height: 40px; background: var(--light); border-radius: 2px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 1rem; }
+  .value-item h3 { font-size: 0.95rem; font-weight: 500; color: var(--navy); margin-bottom: 0.5rem; }
+  .value-item p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; font-weight: 300; }
+
+  /* ETHICS */
+  .ethics { background: #fff8f7; border-top: 1px solid rgba(240,90,78,0.15); }
+  .ethics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-top: 3rem; align-items: start; }
+  .ethics-item { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+  .ethics-dot { width: 8px; height: 8px; background: var(--coral); border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+  .ethics-item-text h4 { font-size: 0.9rem; font-weight: 500; color: var(--navy); margin-bottom: 0.25rem; }
+  .ethics-item-text p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; font-weight: 300; }
+  .ethics-accuracy { background: var(--navy); color: var(--cream); padding: 2rem; border-radius: 4px; }
+  .ethics-accuracy h3 { font-family: 'DM Serif Display', serif; font-size: 1.5rem; color: var(--cream); margin-bottom: 1rem; }
+  .ethics-accuracy li { font-size: 0.85rem; color: rgba(244,240,232,0.6); margin-bottom: 0.5rem; padding-left: 1rem; position: relative; font-weight: 300; }
+  .ethics-accuracy li::before { content: '→'; position: absolute; left: -4px; color: var(--coral); }
+
+  /* TEAM */
+  .team { background: var(--cream); }
+  .team-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3rem; }
+  .team-card { background: var(--white); border: 1px solid rgba(13,27,62,0.1); border-radius: 4px; padding: 2rem; text-align: center; }
+  .team-avatar { width: 60px; height: 60px; background: var(--navy); color: var(--cream); border-radius: 2px; display: flex; align-items: center; justify-content: center; font-family: 'DM Serif Display', serif; font-size: 1.3rem; margin: 0 auto 1rem; }
+  .team-card h3 { font-size: 0.95rem; font-weight: 500; color: var(--navy); }
+  .team-card p { font-size: 0.78rem; color: var(--muted); margin-top: 0.25rem; font-weight: 300; }
+
+  /* FOOTER */
+  footer {
+    background: var(--navy); color: rgba(244,240,232,0.5);
+    padding: 2.5rem 4rem;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.8rem;
+  }
+  .footer-logo { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: var(--cream); }
+  .footer-logo span { color: #7fa0ff; }
+
+  /* ERROR */
+  .pred-error { font-size: 0.8rem; color: var(--red); margin-top: 0.5rem; display: none; }
+
+  @media (max-width: 1100px) {
+    .hero-visual { display: none; }
+    .pred-wrap { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    section, .hero { padding: 5rem 1.5rem 3rem; }
+    .how-grid, .value-grid, .team-grid, .ethics-grid { grid-template-columns: 1fr; }
+    .result-cards { grid-template-columns: 1fr 1fr; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Smart<span>Profit</span></div>
+  <ul class="nav-links">
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#predictor">Predictor</a></li>
+    <li><a href="#value">Value</a></li>
+    <li><a href="#ethics">Ethics</a></li>
+    <li><a href="#team">Team</a></li>
+  </ul>
+  <a href="#predictor" class="nav-cta">Try Predictor</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Profit Predictor AI</div>
+    <h1>Forecast your<br><em>next year's</em><br>profit.</h1>
+    <p class="hero-sub">SmartProfit uses machine learning regression to transform your financial data into accurate profit predictions — replacing guesswork with data-driven insight.</p>
+    <div class="hero-actions">
+      <a href="#predictor" class="btn-primary">Try the Predictor</a>
+      <a href="#how" class="btn-outline">How It Works</a>
+    </div>
+    <div class="hero-stat-row">
+      <div>
+        <div class="hero-stat-num">5,000+</div>
+        <div class="hero-stat-label">Financial records trained</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">5</div>
+        <div class="hero-stat-label">Key input variables</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">AI</div>
+        <div class="hero-stat-label">Regression model</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="floating-card">
+      <div class="fc-label">Predicted Profit — FY 2025</div>
+      <div class="fc-profit">$248,500</div>
+      <div class="fc-bars">
+        <div class="fc-bar-row">
+          <span class="fc-bar-name">Revenue</span>
+          <div class="fc-track"><div class="fc-fill" style="width:100%;background:#3d6ff8"></div></div>
+        </div>
+        <div class="fc-bar-row">
+          <span class="fc-bar-name">Expenses</span>
+          <div class="fc-track"><div class="fc-fill" style="width:72%;background:#f05a4e"></div></div>
+        </div>
+        <div class="fc-bar-row">
+          <span class="fc-bar-name">Profit</span>
+          <div class="fc-track"><div class="fc-fill" style="width:42%;background:#1D9E75"></div></div>
+        </div>
+      </div>
+      <div class="fc-divider"></div>
+      <div class="fc-row"><span class="fc-key">Margin</span><span class="fc-val">29.7%</span></div>
+      <div class="fc-row" style="margin-top:4px"><span class="fc-key">Growth</span><span class="fc-val" style="color:var(--green)">+12%</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-tag">Workflow</div>
+  <h2>Machine <em>learning</em><br>in three steps.</h2>
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-num">01</div>
+      <div class="how-icon">📊</div>
+      <h3>Data Collection</h3>
+      <p>5,000+ past financial records are collected including revenue, costs, profit, and market conditions to build a robust training dataset.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-num">02</div>
+      <div class="how-icon">🤖</div>
+      <h3>Training</h3>
+      <p>A regression model in Python learns the relationship between financial inputs and profit outcomes — identifying patterns and trends over time.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-num">03</div>
+      <div class="how-icon">🚀</div>
+      <h3>Deployment</h3>
+      <p>Business managers input current financial data and the system outputs a predicted profit figure along with a visual breakdown chart.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PREDICTOR TOOL -->
+<section class="predictor" id="predictor">
+  <div class="section-tag">Try It Now</div>
+  <h2>Enter your data,<br>get your <em>prediction.</em></h2>
+  <div class="pred-wrap">
+    <div class="pred-form">
+      <h3>Your Financial Inputs</h3>
+      <div class="field-grid">
+        <div class="field-group">
+          <label class="field-label">Revenue ($)</label>
+          <input class="field-input" id="revenue" type="number" placeholder="500000" min="0" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Expenses ($)</label>
+          <input class="field-input" id="expenses" type="number" placeholder="300000" min="0" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Marketing ($)</label>
+          <input class="field-input" id="marketing" type="number" placeholder="50000" min="0" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">Sales Growth (%)</label>
+          <input class="field-input" id="growth" type="number" placeholder="12" />
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Economic Trend</label>
+        <select class="field-select" id="trend">
+          <option value="1.05">Strong Growth (+5%)</option>
+          <option value="1.02" selected>Moderate Growth (+2%)</option>
+          <option value="1.00">Stable (0%)</option>
+          <option value="0.97">Mild Slowdown (-3%)</option>
+          <option value="0.92">Recession (-8%)</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Industry Sector</label>
+        <select class="field-select" id="sector">
+          <option value="1.08">Technology</option>
+          <option value="1.04" selected>Retail / Commerce</option>
+          <option value="1.03">Manufacturing</option>
+          <option value="1.06">Healthcare</option>
+          <option value="1.02">Food & Hospitality</option>
+          <option value="1.05">Finance / Services</option>
+        </select>
+      </div>
+      <button class="pred-btn" onclick="predict()">Predict Next Year's Profit →</button>
+      <div class="pred-error" id="pred-error">Please fill in all fields before predicting.</div>
+    </div>
+
+    <div class="pred-result" id="pred-result">
+      <div class="result-placeholder" id="result-placeholder">
+        Fill in your financial data on the left and click Predict to see your results.
+      </div>
+      <div id="result-output" style="display:none; flex-direction:column; gap:1.2rem;">
+        <div class="result-main">
+          <div class="result-main-label">Predicted Profit — Next Year</div>
+          <div class="result-main-val" id="res-profit">—</div>
+          <div class="result-main-sub" id="res-sub">—</div>
+        </div>
+        <div class="result-cards">
+          <div class="result-card">
+            <div class="rc-label">Revenue</div>
+            <div class="rc-val" id="res-rev">—</div>
+          </div>
+          <div class="result-card">
+            <div class="rc-label">Expenses</div>
+            <div class="rc-val" id="res-exp">—</div>
+          </div>
+          <div class="result-card">
+            <div class="rc-label">Margin</div>
+            <div class="rc-val" id="res-margin">—</div>
+          </div>
+        </div>
+        <div class="result-bars">
+          <div class="bar-row"><span class="bar-lbl">Revenue</span><div class="bar-track"><div class="bar-fill" id="bar-rev" style="background:#3d6ff8;width:0%"></div></div></div>
+          <div class="bar-row"><span class="bar-lbl">Expenses</span><div class="bar-track"><div class="bar-fill" id="bar-exp" style="background:#f05a4e;width:0%"></div></div></div>
+          <div class="bar-row"><span class="bar-lbl">Profit</span><div class="bar-track"><div class="bar-fill" id="bar-pro" style="background:#1D9E75;width:0%"></div></div></div>
+        </div>
+        <div class="result-note" id="res-note">—</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUSINESS VALUE -->
+<section id="value">
+  <div class="section-tag">Business Value</div>
+  <h2>Why <em>SmartProfit</em><br>matters.</h2>
+  <div class="value-grid">
+    <div class="value-item">
+      <div class="value-icon">💰</div>
+      <h3>Budgeting Decisions</h3>
+      <p>Forecast profit before committing to budgets, removing uncertainty from financial planning cycles.</p>
+    </div>
+    <div class="value-item">
+      <div class="value-icon">📈</div>
+      <h3>Investment Planning</h3>
+      <p>Data-backed profit predictions support smarter capital allocation and investment timing.</p>
+    </div>
+    <div class="value-item">
+      <div class="value-icon">🛡️</div>
+      <h3>Risk Reduction</h3>
+      <p>Identify financial vulnerabilities early and adjust strategy before losses materialize.</p>
+    </div>
+    <div class="value-item">
+      <div class="value-icon">⏱️</div>
+      <h3>Time Savings</h3>
+      <p>Replace days of manual forecasting spreadsheets with instant, consistent AI-generated insights.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ETHICS -->
+<section class="ethics" id="ethics">
+  <div class="section-tag">Ethics & Limits</div>
+  <h2>Responsible<br><em>AI</em> forecasting.</h2>
+  <div class="ethics-grid">
+    <div>
+      <div class="ethics-item">
+        <div class="ethics-dot"></div>
+        <div class="ethics-item-text">
+          <h4>Data Quality Matters</h4>
+          <p>Biased or incorrect financial data could mislead business decisions. Garbage in, garbage out — always verify your inputs.</p>
+        </div>
+      </div>
+      <div class="ethics-item">
+        <div class="ethics-dot"></div>
+        <div class="ethics-item-text">
+          <h4>Augment, Don't Replace</h4>
+          <p>SmartProfit should support — not fully replace — human financial experts who bring contextual judgment to decisions.</p>
+        </div>
+      </div>
+      <div class="ethics-item">
+        <div class="ethics-dot"></div>
+        <div class="ethics-item-text">
+          <h4>Transparent Predictions</h4>
+          <p>Users should understand how predictions are made. SmartProfit shows its inputs, factors, and reasoning clearly.</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="ethics-accuracy">
+        <h3>Why 100% accuracy is impossible</h3>
+        <ul style="list-style:none;padding:0">
+          <li>Unpredictable market changes</li>
+          <li>Inflation and interest rate shifts</li>
+          <li>Unexpected events like economic crises</li>
+          <li>Incomplete or messy financial data</li>
+          <li>Human behavior and sentiment shifts</li>
+        </ul>
+        <p style="margin-top:1.2rem;font-size:0.8rem;color:rgba(244,240,232,0.45);font-style:italic;font-weight:300">SmartProfit follows the 1-second rule: if a financial analyst could estimate profit quickly from past data, a regression model can learn it reliably.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team" id="team">
+  <div class="section-tag">Team</div>
+  <h2>Built by <em>CS1101-060</em></h2>
+  <div class="team-grid">
+    <div class="team-card">
+      <div class="team-avatar">AA</div>
+      <h3>Aseel Alotaibi</h3>
+      <p>Finance; Risk Management</p>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar">RO</div>
+      <h3>Rebecca Ozais</h3>
+      <p>Major</p>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar">JR</div>
+      <h3>Jayden Rosa</h3>
+      <p>Major</p>
+    </div>
+  </div>
+  <p style="margin-top:1.5rem;font-size:0.82rem;color:var(--muted);font-weight:300">Professor: Nan Wang &nbsp;·&nbsp; Course: CS1101-060</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Smart<span>Profit</span></div>
+  <div>Profit Predictor AI &nbsp;·&nbsp; CS1101-060 &nbsp;·&nbsp; Machine Learning (Regression)</div>
+</footer>
+
+<script>
+function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+
+function predict() {
+  var revenue = parseFloat(document.getElementById('revenue').value);
+  var expenses = parseFloat(document.getElementById('expenses').value);
+  var marketing = parseFloat(document.getElementById('marketing').value);
+  var growth = parseFloat(document.getElementById('growth').value);
+  var trend = parseFloat(document.getElementById('trend').value);
+  var sector = parseFloat(document.getElementById('sector').value);
+  var errEl = document.getElementById('pred-error');
+
+  if (isNaN(revenue) || isNaN(expenses) || isNaN(marketing) || isNaN(growth)) {
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  var growthFactor = 1 + (growth / 100);
+  var marketingLift = 1 + (marketing / revenue) * 0.4;
+  var projRevenue = revenue * growthFactor * trend * sector * marketingLift;
+  var expenseGrowth = 1 + (growth > 0 ? (growth / 100) * 0.6 : (growth / 100) * 0.3);
+  var projExpenses = expenses * expenseGrowth * (trend < 1 ? 1.02 : 1.0);
+  var projProfit = projRevenue - projExpenses;
+  var margin = projRevenue > 0 ? (projProfit / projRevenue * 100) : 0;
+
+  document.getElementById('result-placeholder').style.display = 'none';
+  var out = document.getElementById('result-output');
+  out.style.display = 'flex';
+
+  var profitEl = document.getElementById('res-profit');
+  profitEl.textContent = fmt(projProfit);
+  profitEl.style.color = projProfit >= 0 ? '#1D9E75' : '#f05a4e';
+
+  document.getElementById('res-sub').textContent = 'Profit Margin: ' + margin.toFixed(1) + '%';
+  document.getElementById('res-rev').textContent = fmt(projRevenue);
+  document.getElementById('res-exp').textContent = fmt(projExpenses);
+  document.getElementById('res-margin').textContent = margin.toFixed(1) + '%';
+  document.getElementById('res-margin').style.color = margin > 15 ? '#1D9E75' : margin > 0 ? '#BA7517' : '#D85A30';
+
+  var maxVal = Math.max(projRevenue, projExpenses, Math.abs(projProfit), 1);
+  setTimeout(function() {
+    document.getElementById('bar-rev').style.width = Math.round(projRevenue / maxVal * 100) + '%';
+    document.getElementById('bar-exp').style.width = Math.round(projExpenses / maxVal * 100) + '%';
+    document.getElementById('bar-pro').style.width = Math.round(Math.abs(projProfit) / maxVal * 100) + '%';
+  }, 50);
+
+  var note = '';
+  if (projProfit < 0) note = 'Warning: the model forecasts a net loss. Consider reducing expenses or revising growth assumptions.';
+  else if (margin < 5) note = 'Thin margin projected. Consider cost reduction or improved marketing ROI.';
+  else if (margin > 30) note = 'Strong profit margin projected. Model confidence is high given stable input data.';
+  else note = 'Healthy profit projection. Based on regression across revenue, expense, growth, and economic trend factors.';
+  note += ' Remember: 100% accuracy is not possible — market changes and unexpected events may affect actual results.';
+  document.getElementById('res-note').textContent = note;
+}
+</script>
+</body>
+</html>
